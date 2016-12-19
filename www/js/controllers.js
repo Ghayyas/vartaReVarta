@@ -9,7 +9,7 @@ var app = angular.module('varta.controllers', [])
 
 
     //Share AnyWhere Function
-    var shareTitle = 'ગુજરાતી વાર્તાઓ ની સૌથી વિશાળ એપ્લીકેશન, તદન મફત મેળવો, જેમાં અકબર બીરબલ ની વાર્તાઓ, બોધ કથાઓ, શૈલેશભાઈ ની આજ ની વાર્તા, દાદા દાદી ની વાર્તાઓ, પંચતંત્ર ની વાર્તાઓ અને બીજી ઘણી વાર્તાઓ છે. શેર કરો અને ઇનામો જીતવાનો પણ મૌકો મળશે. વધુ વિગત માટે એપ્લીકેશન ડાઉનલોડ કરો, ક્લિક કરો : http://bit.ly/1TOaeCn અને હા આ મેસેજ બધા ગુજરાતીઓ સાથે અચૂક શેર કરજો. જય જય ગરવી ગુજરાત.';
+    var shareTitle = 'ગુજરાતી વાર્તાઓ ની સૌથી વિશાળ એપ્લીકેશન, તદન મફત મેળવો, જેમાં અકબર બીરબલ ની વાર્તાઓ, બોધ કથાઓ, શૈલેશભાઈ ની આજ ની વાર્તા, દાદા દાદી ની વાર્તાઓ, પંચતંત્ર ની વાર્તાઓ અને બીજી ઘણી વાર્તાઓ છે. શેર કરો અને ઇનામો જીતવાનો પણ મૌકો મળશે. વધુ વિગત માટે એપ્લીકેશન ડાઉનલોડ કરો, ક્લિક કરો અને હા આ મેસેજ બધા ગુજરાતીઓ સાથે અચૂક શેર કરજો. જય જય ગરવી ગુજરાત.';
     $scope.shareAnywhere = function () {
 
       $timeout(function () {
@@ -182,10 +182,11 @@ var app = angular.module('varta.controllers', [])
 
     var totalPost;
     showLoading.show();
-    $http.get(WordPress_url +'/Admin/api/categories.php?accesskey=1000Keys4568520').then(function (d) {
+    $http.get(WordPress_url +'/?json=get_category_index').then(function (d) {
       // $localStorage.categoryData = d.data.categories;
-      _self.data = d.data.data.preview_data;
-      var data = d.data.data.preview_data;
+      // console.log('d',d);
+      _self.data = d.data.categories;
+      var data = d.data.categories;
       // console.log('data',data);
            stopLoading.hide();
       $ionicPlatform.ready(function(){
@@ -199,14 +200,14 @@ var app = angular.module('varta.controllers', [])
                 //  categories (title) VALUES (?)
               var query2 = "INSERT INTO allCategories (categories) VALUES (?)";
                 $cordovaSQLite.execute(db, query2, [JSON.stringify(data)]).then(function(res) {
-                        console.log(" category id INSERT ID -> " + res.insertId);
+                        // console.log(" category id INSERT ID -> " + res.insertId);
                     }, function (err) {
-                        console.log(err);
+                        // console.log(err);
                     });     
                 
             }
           },function(e) {
-            console.log('eerror',e);
+            // console.log('eerror',e);
           })  
       })
        
@@ -239,12 +240,12 @@ var app = angular.module('varta.controllers', [])
                 
                 
             } else {
-                console.log("No results found");
+                // console.log("No results found");
                 
                 
             }
           },function(e) {
-            console.log('eerror',e);
+            // console.log('eerror',e);
           }) 
        
        
@@ -306,10 +307,10 @@ var app = angular.module('varta.controllers', [])
 
     _self.data = JSON.parse($stateParams.category);
     _self.title = $stateParams.title
-
+    // console.log('self data',_self.data);
     showLoading.show();
-    $http.get(WordPress_url +'/?json=get_category_index' + _self.data).then(function (d) {
-       console.log('_self.data',d.data);
+    $http.get(WordPress_url +'/?json=get_category_posts&id=' + _self.data).then(function (d) {
+      //  console.log('_self.data',d);
       // $localStorage.categoryDetailTitle = d.data.data.varta_lists;
       $localStorage.categoryDetailArray = d.data.posts;
       // $localStorage.categoryDetailCount = d.data.count;
@@ -344,7 +345,7 @@ var app = angular.module('varta.controllers', [])
       showLoading.show();
       count = count + 10;
 
-      $http.get(WordPress_url +'/?json=get_category_posts/?id=' + _self.data + '&count=' + count).then(function (r) {
+      $http.get(WordPress_url +'/?json=get_category_posts&id=' + _self.data + '&count=' + count).then(function (r) {
         // $localStorage.categoryDetailArray = r.data.posts;
         _self.categoryArray = r.data.posts;
 
@@ -492,7 +493,7 @@ var app = angular.module('varta.controllers', [])
     _self.shareFb = function (msg) {
       var output = msg.replace(/(<([^>]+)>)/ig, "");
 
-      $cordovaSocialSharing.shareViaFacebook(jsonParse.title, null, "http://bit.ly/1TOaeCn ")
+      $cordovaSocialSharing.shareViaFacebook(jsonParse.title +" " + " આખી વાર્તા વાંચવા ક્લિક કરો: http://bit.ly/1TOaeCn અને ગુજરાતી વાર્તાની બેસ્ટ એપ્લીકેશન ડાઉનલોડ કરી લો", null, "http://bit.ly/1TOaeCn ")
         .then(function (s) {
         }, function (e) {
         });
@@ -500,7 +501,7 @@ var app = angular.module('varta.controllers', [])
 
     _self.shareAnyWhere = function (d) {
       setTimeout(function () {
-        $cordovaSocialSharing.share(jsonParse.title, null, null, "http://bit.ly/1TOaeCn");
+        $cordovaSocialSharing.share(jsonParse.title +" " + " આખી વાર્તા વાંચવા ક્લિક કરો: http://bit.ly/1TOaeCn અને ગુજરાતી વાર્તાની બેસ્ટ એપ્લીકેશન ડાઉનલોડ કરી લો", null, null, "http://bit.ly/1TOaeCn");
       }, 300);
     };
 
