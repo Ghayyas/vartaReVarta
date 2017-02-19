@@ -5,8 +5,8 @@
  */
 
   //show loading
-var netyatraService = angular.module('varta.Service',[]);
-netyatraService.service('showLoading',function($ionicLoading) {
+var vartaService = angular.module('varta.Service',[]);
+vartaService.service('showLoading',function($ionicLoading) {
   this.show = function() {
     $ionicLoading.show({
       template: 'Please wait...'
@@ -17,7 +17,7 @@ netyatraService.service('showLoading',function($ionicLoading) {
 });
 
 //hide loading
-netyatraService.service('stopLoading',function($ionicLoading){
+vartaService.service('stopLoading',function($ionicLoading){
      this.hide = function(){
     $ionicLoading.hide().then(function(){
     });
@@ -30,7 +30,7 @@ netyatraService.service('stopLoading',function($ionicLoading){
  * Http Request to get Data From Server
  * 
  */
-  netyatraService.service('httpRequest',function($http,$q){
+  vartaService.service('httpRequest',function($http,$q){
  
    var deffered = $q.defer();
   //  var q = 1;
@@ -58,7 +58,7 @@ netyatraService.service('stopLoading',function($ionicLoading){
  * 
  */
 
-netyatraService.service('alertService',function($ionicPopup) {
+vartaService.service('alertService',function($ionicPopup) {
    this.showAlert = function(title,template) {
    var alertPopup = $ionicPopup.alert({
      title: title,
@@ -78,7 +78,7 @@ netyatraService.service('alertService',function($ionicPopup) {
  * 
  */
  
-netyatraService.factory ('StorageService', function ($localStorage,$q) {
+vartaService.factory ('StorageService', function ($localStorage,$q) {
  var deffered = $q.defer();
  $localStorage = $localStorage.$default({
     item: []
@@ -127,24 +127,32 @@ return {
  * 
  */
 
-netyatraService.service('bannerAd',function(){
+vartaService.service('bannerAd',function($q){
      var admobid = {};
   if( /(android)/i.test(navigator.userAgent) ) { // for android & amazon-fireos
     admobid = {
-      banner: 'ca-app-pub-7631554899487555/8481365429', // or DFP format "/6253334/dfp_example_ad"
-      interstitial: 'ca-app-pub-7631554899487555/9958098624'
+      banner: banner, // or DFP format "/6253334/dfp_example_ad"
+      interstitial: interstitial
     };
   } else if(/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
     admobid = {
-      banner: 'ca-app-pub-7631554899487555/8481365429', // or DFP format "/6253334/dfp_example_ad"
-      interstitial: 'ca-app-pub-7631554899487555/9958098624'
+      banner: banner, // or DFP format "/6253334/dfp_example_ad"
+      interstitial: interstitial
     };
   } else { // for windows phone
     admobid = {
-      banner: 'ca-app-pub-7631554899487555/8481365429', // or DFP format "/6253334/dfp_example_ad"
-      interstitial: 'ca-app-pub-7631554899487555/9958098624'
+      banner: banner, // or DFP format "/6253334/dfp_example_ad"
+      interstitial: interstitial
     };
   }
+this.prepareInitial = function(){
+  // preppare and load ad resource in background, e.g. at begining of game level
+  //  if(typeof(AdMob) !== 'undefined') AdMob.prepareInterstitial( {adId:admobid.interstitial, autoShow:true},function(s){
+  //     console.log('initial success',s);
+  //  },function(fail){
+  //    console.log('inital failed',fail);
+  //  });
+}
   
   this.banner = function(){
   
@@ -152,33 +160,108 @@ netyatraService.service('bannerAd',function(){
     adId: admobid.banner,
     position: AdMob.AD_POSITION.BOTTOM_CENTER,
     autoShow: true });
+
 }
 
 this.hideBanner = function(){
   if(AdMob) AdMob.removeBanner();
 }
   
-  this.showInter = function(){
-      // preppare and load ad resource in background, e.g. at begining of game level
-   if(AdMob) AdMob.prepareInterstitial( {adId:admobid.interstitial, autoShow:true} );
-
-  // show the interstitial later, e.g. at end of game level
-  if(AdMob) AdMob.showInterstitial();
+   this.showInter = function(){
+  if(AdMob) AdMob.prepareInterstitial( {adId:admobid.interstitial, autoShow:true},function(s){
+    AdMob.showInterstitial();
+  },function(e){
+  });
+      // check and show it at end of a game level
+      AdMob.isInterstitialReady(function(ready){
+        if(ready) AdMob.showInterstitial();
+      });
   }
 })
 
 
-netyatraService.service('fbLikeService',function($q,$window){
+vartaService.service('fbLikeService',function($q,$window){
       var deffer = $q.defer();
        this.openWindow = function(){ 
-        var d = $window.open('fb://page/1519563958349711', '_system');
+        var d = $window.open(fb_page, '_system');
         if(d){
           deffer.resolve(true);
         }
         else{
           deffer.reject(true);
         }
-      
       return deffer.promise;
    }
+})
+
+vartaService.service('askedForUpate',function($q,$ionicPopup,$window){
+  var deffer = $q.defer();
+  this.asked = function(){
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Alert!',
+      template: 'Would to like to check the update',
+      cancelText: 'No Thanks',
+      okText:'Yes Please'
+  });
+  confirmPopup.then(function(res) {
+        if(res) {
+        if(ionicPlatform == 'android'){
+         $window.open('market://details?id='+play_id, '_system', 'location=yes');
+        }
+        else{
+          $window.open(apple_id,'_system','location=yes');
+        }
+       } else {
+          //Do nothing
+        }
+        deffer.resolve(true);
+      });
+ return deffer.promise 
+ }
+})
+
+vartaService.service('askedForRating',function($q,$cordovaAppRate,$window){
+  var deffer = $q.defer();
+  this.askedForRate = function(){
+    AppRate.preferences = {
+      openStoreInApp: true,
+      useCustomRateDialog: false,
+      displayAppName: app_name,
+      // usesUntilPrompt: 5,
+      promptAgainForEachNewVersion: false,
+      storeAppURL: {
+      //ios: apple_id, //'id512939461',
+      android: 'market://details?id='+play_id
+      // windows: 'ms-windows-store://pdp/?ProductId=<the apps Store ID>',
+      // blackberry: 'appworld://content/[App Id]/',
+      // windows8: 'ms-windows-store:Review?name=<the Package Family Name of the application>'
+    },
+    customLocale: {
+      title: "Rate us",
+      message: "Would you like to Rate us ?",
+      cancelButtonLabel: "No, Thanks",
+      laterButtonLabel: "Remind Me Later",
+      rateButtonLabel: "Yes, Sure"
+    },
+    callbacks: {
+    onRateDialogShow: function(callback){
+      callback(0) // do nothing
+   },
+    onButtonClicked: function(buttonIndex){
+    //do noting
+         if(buttonIndex == 1){
+            deffer.resolve(true);
+          if(ionicPlatform == 'android'){
+             //do nothing
+           }
+           else{
+             $window.open(apple_id,'_system','location=true');
+           }
+         }
+    }
+  }
+ };
+  AppRate.promptForRating(true);
+  return deffer.promise;
+  }
 })

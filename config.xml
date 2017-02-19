@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.deucen.gujaratistoriesvartao" version="2.1" xmlns="http://teamclouders.com" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.deucen.gujaratistoriesvartao" version="2.2" xmlns="http://teamclouders.com" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>Varta Re Varta</name>
   <description>
         An Team Clouders Project
@@ -36,9 +36,7 @@
   <plugin name="cordova-plugin-statusbar" spec="~2.1.3"/>
   <plugin name="cordova-plugin-google-analytics" spec="https://github.com/danwilson/google-analytics-plugin.git"/>
   <plugin name="cordova-plugin-admobpro" spec="~2.19.1"/>
-  <plugin name="phonegap-plugin-push" spec="~1.8.2">
-    <variable name="SENDER_ID" value="188530049779"/>
-  </plugin>
+  <plugin name="onesignal-cordova-plugin" spec="~2.0.11"/>
   <plugin name="cordova-plugin-whitelist" spec="~1.2.2"/>
   <plugin name="ionic-plugin-keyboard" spec="~2.2.1"/>
   <plugin name="cordova-plugin-console" spec="~1.0.4"/>

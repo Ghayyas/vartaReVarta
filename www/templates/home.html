@@ -1,4 +1,9 @@
-<ion-view view-title="Varta Re Varta">
+<ion-view view-title="Vrat Kathao">
+  <ion-nav-buttons side="right">
+   <button class="button button-clear" ng-click="home.gotoSearch()">
+     <i class="icon ion-search"></i>
+     </button> 
+  </ion-nav-buttons>
   <ion-content style="background-color:#b2b2b2;">
       <div class="list card postCard card-title1" ng-repeat="data in home.data track by $index">
 
