@@ -68,6 +68,14 @@ var app = angular.module('varta.controllers', [])
 
     };
 
+//Send story function
+     
+     $scope.sendStory = function(){
+       $window.open("mailto:vartarevarta@gmail.com",'_system','location=yes');
+     }
+
+
+
 
     //Our More Apps
 
