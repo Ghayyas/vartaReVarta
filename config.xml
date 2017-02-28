@@ -39,9 +39,7 @@
   <plugin name="onesignal-cordova-plugin" spec="~2.0.11"/>
   <plugin name="cordova-plugin-whitelist" spec="~1.2.2"/>
   <plugin name="ionic-plugin-keyboard" spec="~2.2.1"/>
-  <plugin name="cordova-plugin-console" spec="~1.0.4"/>
   <plugin name="cordova-plugin-inappbrowser" spec="~1.5.0"/>
-  <plugin name="cordova-plugin-appavailability" spec="~0.4.2"/>
   <plugin name="cordova-plugin-apprate" spec="~1.2"/>
   <plugin name="cordova-sqlite-storage" spec="https://github.com/litehelpers/Cordova-sqlite-storage.git"/>
   <platform name="android">
